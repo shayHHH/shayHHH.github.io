@@ -12,9 +12,7 @@ tag: About author
 
 The following is my pesonal introdunction!
 
-
-haha..
-I haven't even started yet..
+A girl who looks cold but isn't...
 
 
 [jekyll]:      http://jekyllrb.com
