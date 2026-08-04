@@ -1,147 +1,297 @@
----
-layout: default
----
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Workspace | Profile</title>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
- <div class="container docs-container">
-      <div class="row">
-        <div class="col-md-3">
-          <div class="sidebar hidden-print" role="complementary">
-            <div id="navigation">
-              <h1>目录</h1>
-              <ul class="nav sidenav">
-                {% capture topping %}false{% endcapture %}
-                {% for post in site.posts  %}
-                  {% if post.topping %}
-                    {% capture topping %}{{post.topping}}{% endcapture %}
-                    {% break %}
-                  {% endif %}
-                {% endfor %}
-                {% if topping == 'true' %}
-                  <li><a href="#topping">置顶</a>
-                {% endif %}
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --card-border: #30363d;
+            --text-primary: #c9d1d9;
+            --text-heading: #ffffff;
+            --text-muted: #8b949e;
+            --accent-color: #58a6ff;
+            --accent-glow: rgba(88, 166, 255, 0.15);
+            --code-bg: #21262d;
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'Fira Code', monospace;
+        }
 
-                {% for post in site.posts  %}
-                
-                  {% capture this_year %}{{ post.date | date: "%Y" }}{% endcapture %}
-                  {% capture this_month %}{{ post.date | date: "%B" }}{% endcapture %}
-                  {% capture next_year %}{{ post.previous.date | date: "%Y" }}{% endcapture %}
-                  {% capture next_month %}{{ post.previous.date | date: "%B" }}{% endcapture %}
-                  {% if forloop.first %}
-                    <li><a href="#year_{{this_year}}">{{this_year}}</a>
-                      <ul class="nav">
-                        <li><a href="#month_{{this_year}}_{{this_month}}">{{this_month}}</a></li>
-                  {% endif %}
-                  {% if forloop.last %}
-                        </ul>
-                      </li>
-                  {% else %}
-                    {% if this_year != next_year %}
-                        </ul>
-                      </li>
-                      <li><a href="#year_{{next_year}}">{{next_year}}</a>
-                        <ul class="nav">
-                          <li><a href="#month_{{next_year}}_{{next_month}}">{{next_month}}</a></li>
-                    {% else %}    
-                      {% if this_month != next_month %}
-                          <li><a href="#month_{{next_year}}_{{next_month}}">{{next_month}}</a></li>
-                      {% endif %}
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              </ul>
-              <div style="height: 200px;width: 200px;">
-                
-                <script type="text/javascript" src="//rf.revolvermaps.com/0/0/8.js?i={{ site.revolvermaps }}&amp;m=0&amp;c=ff0000&amp;cr1=ffffff&amp;f=arial&amp;l=33" async="async"> 
-                </script>
-              </div>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 860px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Header / Terminal style Hero */
+        header {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: absolute;
+            top: 14px;
+            left: 18px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+
+        .profile-intro {
+            margin-top: 1rem;
+        }
+
+        .profile-intro h1 {
+            color: var(--text-heading);
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-intro p.subtitle {
+            font-family: var(--font-mono);
+            color: var(--accent-color);
+            font-size: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .profile-intro p.bio {
+            color: var(--text-primary);
+            font-size: 1.05rem;
+            max-width: 680px;
+        }
+
+        /* Section Title */
+        .section-title {
+            color: var(--text-heading);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 2.5rem 0 1.2rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--card-border);
+        }
+
+        /* Cards Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: all 0.25s ease;
+        }
+
+        .card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px var(--accent-glow);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .card h3 {
+            color: var(--text-heading);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
+        /* Tech Stack Tags */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 1rem;
+        }
+
+        .tag {
+            background: var(--code-bg);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--card-border);
+        }
+
+        /* Social Links & Footer */
+        .social-links {
+            display: flex;
+            gap: 1.2rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .social-btn:hover {
+            color: #fff;
+            border-color: var(--accent-color);
+            background: var(--code-bg);
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+        }
+
+        /* Responsive Adjustment */
+        @media (max-width: 600px) {
+            body { padding: 1rem 0.5rem; }
+            header { padding: 2rem 1.5rem; }
+            .profile-intro h1 { font-size: 1.8rem; }
+            .social-links { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Main Header / Hero -->
+        <header>
+            <div class="terminal-header">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
             </div>
-          </div>
-        </div>
-        <div class="col-md-9" role="main">
-          <div class="panel docs-content">
-            <div class="wrapper">
-              <div class="home">
-                {% capture topping %}false{% endcapture %}
-                {% for post in site.posts  %}
-                  {% if post.topping %}
-                    {% capture topping %}{{post.topping}}{% endcapture %}
-                    {% break %}
-                  {% endif %}
-                {% endfor %}
-              
-                {% if topping == 'true' %}
-                <h2 class="topping">
-                  置顶文章
-                  <span class="anchor-target" id="topping"></span>
-                  <a href="#topping" name="topping" class="anchor glyphicon glyphicon-link"></a>
-                </h2>
-                <ul>
-                  {% for post in site.posts  %}
-                    {% if post.topping %}
-                      <ol class="breadcrumb">
-                        <li><span>{{ post.date | date: "%B %e, %Y" }}</span> &raquo; <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></li>
-                      </ol>
-                    {% endif %}
-                  {% endfor %}
-                </ul>
-                {% endif %}
-
-                {% for post in site.posts  %}
-
-                  {% capture this_year %}{{ post.date | date: "%Y" }}{% endcapture %}
-                  {% capture this_month %}{{ post.date | date: "%B" }}{% endcapture %}
-                  {% capture next_year %}{{ post.previous.date | date: "%Y" }}{% endcapture %}
-                  {% capture next_month %}{{ post.previous.date | date: "%B" }}{% endcapture %}
-
-                  {% if forloop.first %}
-                    <h1>
-                      {{this_year}}
-                      <span class="anchor-target" id="year_{{this_year}}"></span>
-                      <a href="#year_{{this_year}}" name="year_{{this_year}}" class="anchor glyphicon glyphicon-link"></a>
-                    </h1>
-                    <h2>
-                      {{this_month}}
-                      <span class="anchor-target" id="month_{{this_year}}_{{this_month}}"></span>
-                      <a href="#month_{{this_year}}_{{this_month}}" name="month_{{this_year}}_{{this_month}}" class="anchor glyphicon glyphicon-link"></a>
-                    </h2>
-                    <ul>
-                  {% endif %}
-
-                  <ol class="breadcrumb">
-                   <li><span>{{ post.date | date: "%B %e, %Y" }}</span> &raquo; <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></li>
-                  </ol>
-                  {% if forloop.last %}
-                    </ul>
-                  {% else %}
-                    {% if this_year != next_year %}
-                      </ul>
-                      <h1>
-                        {{next_year}}
-                        <span class="anchor-target" id="year_{{next_year}}"></span>
-                        <a href="#year_{{next_year}}" name="year_{{next_year}}" class="anchor glyphicon glyphicon-link"></a>
-                      </h1>
-                      <h2>
-                        {{next_month}}
-                        <span class="anchor-target" id="month_{{next_year}}_{{next_month}}"></span>
-                        <a href="#month_{{next_year}}_{{next_month}}" name="month_{{next_year}}_{{next_month}}" class="anchor glyphicon glyphicon-link"></a>
-                      </h2>
-                      <ul>
-                    {% else %}    
-                      {% if this_month != next_month %}
-                        </ul>
-                        <h2>
-                          {{next_month}}
-                          <span class="anchor-target" id="month_{{next_year}}_{{next_month}}"></span>
-                          <a href="#month_{{next_year}}_{{next_month}}" name="month_{{next_year}}_{{next_month}}" class="anchor glyphicon glyphicon-link"></a>
-                        </h2>
-                        <ul>
-                      {% endif %}
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              </div>
+            <div class="profile-intro">
+                <h1>Hi, I'm <span style="color: var(--accent-color);">Shay</span> 👋</h1>
+                <p class="subtitle">> Product Manager & Tech Explorer</p>
+                <p class="bio">
+                    专注于企业级 B2B SaaS 与 金融科技 (Fintech) 系统架构设计。热衷于将复杂业务逻辑抽象为高效工作流，偶尔也探索独立游戏开发与代码实践。
+                </p>
+                
+                <div class="social-links">
+                    <a href="https://github.com/shayHHH" target="_blank" class="social-btn">
+                        <i class="fab font-awesome-logo-full fa-github"></i> GitHub
+                    </a>
+                    <a href="mailto:your_email@example.com" class="social-btn">
+                        <i class="fas fa-envelope"></i> Email
+                    </a>
+                </div>
             </div>
-          </div>
+        </header>
+
+        <!-- Focus & Projects Section -->
+        <h2 class="section-title"><i class="fas fa-cubes"></i> 核心关注领域</h2>
+        <div class="grid">
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-shield-halved"></i></div>
+                <h3>B2B Fintech & 风控体系</h3>
+                <p>设计高并发、安全合规的支付结算、KYC/AML 审核机制及商户管理系统。</p>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-network-wired"></i></div>
+                <h3>企业级工作流与 SaaS 架构</h3>
+                <p>精通复杂 ERP/CRM 流程建模，提升团队协同效能与系统整体扩展性。</p>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-gamepad"></i></div>
+                <h3>独立游戏与极客项目</h3>
+                <p>探索结合多学科知识的解谜游戏设计，关注 Hacker 风格的交互体验。</p>
+            </div>
         </div>
-      </div>
+
+        <!-- Skills / Tech Stack -->
+        <h2 class="section-title"><i class="fas fa-code"></i> 技术与工具箱</h2>
+        <div class="tags">
+            <span class="tag">System Design</span>
+            <span class="tag">Fintech / Risk Control</span>
+            <span class="tag">B2B SaaS</span>
+            <span class="tag">HTML5 / Modern CSS</span>
+            <span class="tag">Git / GitHub Pages</span>
+            <span class="tag">macOS / Terminal Tools</span>
+        </div>
     </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© <span id="year"></span> shayHHH. Powered by GitHub Pages.</p>
+    </footer>
+
+    <script>
+        // 动态更新年份
+        document.getElementById('year').innerText = new Date().getFullYear();
+    </script>
+</body>
+</html>
